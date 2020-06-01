@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace StaticPathConverter
@@ -27,17 +23,19 @@ namespace StaticPathConverter
             double y = 0.0;
             string output = "";
             List<String> commands = split(txtStatic.Text);
+            string current = null;
             try
             {
-                foreach (string command in commands)
+                foreach (String command in commands)
                 {
+                    current = command;
                     output += parse(command, ref x, ref y);
                 }
                 txtRelative.Text = output;
             }
             catch (Exception e)
             {
-                MessageBox.Show("Error while parsing " + e.Message);
+                MessageBox.Show("Error while parsing :" + (current ?? "") + "\n" + e.Message);
             }
 
 
@@ -108,9 +106,9 @@ namespace StaticPathConverter
                         {
                             throw new Exception("Expected 2 parameters for Move command instead got " + prms.Count);
                         }
-                        response = "m" + asString(prms[0] - x) + " " + asString(prms[1] - y);
-                        x = prms[0];
-                        y = prms[1];
+                        response = "m" + asString(prms[0]) + " " + asString(prms[1]);
+                        x += prms[0];
+                        y += prms[1];
                         break;
                     }
                 case 'Z':
@@ -207,28 +205,32 @@ namespace StaticPathConverter
                     }
                 case 'C':
                     {
-                        if (prms.Count != 6)
+                        if (prms.Count < 4 || prms.Count % 2 == 1)
                         {
-                            throw new Exception("Expected 6 parameters for Curve command instead got " + prms.Count);
+                            throw new Exception("Expected an even number of at least 4 parameters for Curve command instead got " + prms.Count);
                         }
-                        response = "c" + asString(prms[0] - x) + " " + asString(prms[1] - y) + " " +
-                            asString(prms[2] - x) + " " + asString(prms[3] - y) + " " +
-                            asString(prms[4] - x) + " " + asString(prms[5] - y);
-                        x = prms[4];
-                        y = prms[5];
+                        response = "c";
+                        for (int i = 0; i < prms.Count; i += 2)
+                        {
+                            response += " " + asString(prms[i] - x) + " " + asString(prms[i + 1] - y);
+                        }
+                        x = prms[prms.Count - 2];
+                        y = prms[prms.Count - 1];
                         break;
                     }
                 case 'c':
                     {
-                        if (prms.Count != 6)
+                        if (prms.Count < 4 || prms.Count % 2 == 1)
                         {
-                            throw new Exception("Expected 6 parameters for Curve command instead got " + prms.Count);
+                            throw new Exception("Expected an even number of at least 4 parameters for Curve command instead got " + prms.Count);
                         }
-                        response = "c" + asString(prms[0]) + " " + asString(prms[1]) + " " +
-                            asString(prms[2]) + " " + asString(prms[3]) + " " +
-                            asString(prms[4]) + " " + asString(prms[5]);
-                        x += prms[4];
-                        y += prms[5];
+                        response = "c";
+                        for (int i = 0; i < prms.Count; i += 2)
+                        {
+                            response += " " + asString(prms[i]) + " " + asString(prms[i + 1]);
+                        }
+                        x += prms[prms.Count - 2];
+                        y += prms[prms.Count - 1];
                         break;
                     }
                 case 'S':
@@ -265,7 +267,7 @@ namespace StaticPathConverter
 
         private string asString(double num)
         {
-            String response = Math.Round(num,2).ToString().Replace(",", ".");
+            String response = Math.Round(num, 2).ToString().Replace(",", ".");
             Console.WriteLine(" converted " + num + " to  " + response);
             return response;
         }
