@@ -48,7 +48,7 @@ namespace StaticPathConverter
         {
             List<string> response = new List<string>();
             string current = "";
-            string valid = ",. 0123456789";
+            string valid = "-,. 0123456789";
             foreach (char c in text)
             {
                 if (!valid.Contains(c) && !current.Trim().Equals(""))
@@ -104,9 +104,17 @@ namespace StaticPathConverter
                     }
                 case 'm':
                     {
-
+                        if (prms.Count != 2)
+                        {
+                            throw new Exception("Expected 2 parameters for Move command instead got " + prms.Count);
+                        }
+                        response = "m" + asString(prms[0] - x) + " " + asString(prms[1] - y);
+                        x = prms[0];
+                        y = prms[1];
+                        break;
                     }
                 case 'Z':
+                case 'z':
                     {
                         response = "z";
                         break;
@@ -121,6 +129,16 @@ namespace StaticPathConverter
                         x = prms[0];
                         break;
                     }
+                case 'h':
+                    {
+                        if (prms.Count != 1)
+                        {
+                            throw new Exception("Expected 1 parameter for Horizontal command instead got " + prms.Count);
+                        }
+                        response = "h" + asString(prms[0]);
+                        x += prms[0];
+                        break;
+                    }
                 case 'V':
                     {
                         if (prms.Count != 1)
@@ -129,6 +147,16 @@ namespace StaticPathConverter
                         }
                         response = "v" + asString(prms[0] - y);
                         y = prms[0];
+                        break;
+                    }
+                case 'v':
+                    {
+                        if (prms.Count != 1)
+                        {
+                            throw new Exception("Expected 1 parameter for Vertical command instead got " + prms.Count);
+                        }
+                        response = "v" + asString(prms[0]);
+                        y += prms[0];
                         break;
                     }
                 case 'L':
@@ -142,16 +170,39 @@ namespace StaticPathConverter
                         y = prms[1];
                         break;
                     }
+                case 'l':
+                    {
+                        if (prms.Count != 2)
+                        {
+                            throw new Exception("Expected 2 parameters for Line command instead got " + prms.Count);
+                        }
+                        response = "l" + asString(prms[0]) + " " + asString(prms[1]);
+                        x += prms[0];
+                        y += prms[1];
+                        break;
+                    }
                 case 'A':
                     {
                         if (prms.Count != 7)
                         {
-                            throw new Exception("Expected 7 parameters for Curve command instead got " + prms.Count);
+                            throw new Exception("Expected 7 parameters for Arc command instead got " + prms.Count);
                         }
                         response = "c" + asString(prms[0]) + " " + asString(prms[1]) + " " + asString(prms[2]) + " " + asString(prms[3]) + " " + asString(prms[4]) + " " +
                             asString(prms[5] - x) + " " + asString(prms[6] - y);
                         x = prms[5];
                         y = prms[6];
+                        break;
+                    }
+                case 'a':
+                    {
+                        if (prms.Count != 7)
+                        {
+                            throw new Exception("Expected 7 parameters for Arc command instead got " + prms.Count);
+                        }
+                        response = "c" + asString(prms[0]) + " " + asString(prms[1]) + " " + asString(prms[2]) + " " + asString(prms[3]) + " " + asString(prms[4]) + " " +
+                            asString(prms[5]) + " " + asString(prms[6]);
+                        x += prms[5];
+                        y += prms[6];
                         break;
                     }
                 case 'C':
@@ -168,11 +219,42 @@ namespace StaticPathConverter
                         break;
                     }
                 case 'c':
-                case 'z':
-                case 'l':
-                case 'a':
-                case 'm':
-
+                    {
+                        if (prms.Count != 6)
+                        {
+                            throw new Exception("Expected 6 parameters for Curve command instead got " + prms.Count);
+                        }
+                        response = "c" + asString(prms[0]) + " " + asString(prms[1]) + " " +
+                            asString(prms[2]) + " " + asString(prms[3]) + " " +
+                            asString(prms[4]) + " " + asString(prms[5]);
+                        x += prms[4];
+                        y += prms[5];
+                        break;
+                    }
+                case 'S':
+                    {
+                        if (prms.Count != 4)
+                        {
+                            throw new Exception("Expected 4 parameters for Smooth Curve command instead got " + prms.Count);
+                        }
+                        response = "S" + asString(prms[0] - x) + " " + asString(prms[1] - y) + " " +
+                            asString(prms[2] - x) + " " + asString(prms[3] - y);
+                        x = prms[2];
+                        y = prms[3];
+                        break;
+                    }
+                case 's':
+                    {
+                        if (prms.Count != 4)
+                        {
+                            throw new Exception("Expected 4 parameters for Smooth Curve command instead got " + prms.Count);
+                        }
+                        response = "s" + asString(prms[0]) + " " + asString(prms[1]) + " " +
+                            asString(prms[2]) + " " + asString(prms[3]);
+                        x += prms[2];
+                        y += prms[3];
+                        break;
+                    }
                 default:
                     throw new Exception("Unrecognized command " + cmd);
             }

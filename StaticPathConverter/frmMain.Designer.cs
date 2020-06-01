@@ -79,6 +79,7 @@
             // 
             // btnConvert
             // 
+            this.btnConvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConvert.Location = new System.Drawing.Point(713, 415);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(75, 23);
@@ -89,6 +90,7 @@
             // 
             // chkNoMove
             // 
+            this.chkNoMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkNoMove.AutoSize = true;
             this.chkNoMove.Checked = true;
             this.chkNoMove.CheckState = System.Windows.Forms.CheckState.Checked;
