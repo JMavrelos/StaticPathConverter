@@ -8,6 +8,7 @@ using System.Windows.Forms;
 namespace StaticPathConverter {
     public partial class frmMain : Form {
         private bool changeCommas = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator.Equals(",");
+        private const int ACCURACY = 5;
 
 
         public frmMain() {
@@ -29,10 +30,7 @@ namespace StaticPathConverter {
             } catch (Exception e) {
                 MessageBox.Show("Error while parsing :" + (current ?? "") + "\n" + e.Message);
             }
-
-
         }
-
 
         private List<string> split(string text) {
             List<string> response = new List<string>();
@@ -58,9 +56,9 @@ namespace StaticPathConverter {
                 .Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .ToList().Select((it) => {
                     if (changeCommas) {
-                        return Math.Round(double.Parse(it.Replace(".", ",")), 2);
+                        return Math.Round(double.Parse(it.Replace(".", ",")), ACCURACY);
                     } else {
-                        return Math.Round(double.Parse(it), 2);
+                        return Math.Round(double.Parse(it), ACCURACY);
                     }
                 }).ToList();
 
@@ -222,7 +220,7 @@ namespace StaticPathConverter {
 
 
         private string asString(double num) {
-            String response = Math.Round(num, 2).ToString().Replace(",", ".");
+            String response = Math.Round(num, ACCURACY).ToString().Replace(",", ".").TrimEnd('0');
             Console.WriteLine(" converted " + num + " to  " + response);
             return response;
         }
